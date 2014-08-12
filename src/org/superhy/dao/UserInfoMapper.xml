@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.superhy.dao.UserInfoMapper">
+	<insert id="add" parameterType="UserInfo">
+		insert into user_info (name,
+		pass, weight, birth)
+		value (#{name}, #{pass}, #{weight},
+		#{birth})
+	</insert>
+
+	<update id="update" parameterType="UserInfo">
+		update user_info set id =
+		#{id}, name = #{name}, pass = #{pass}, weight = #{weight}, birth =
+		#{birth}
+		where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from user_info where id
+		= #{id}
+	</delete>
+
+	<select id="load" parameterType="int" resultType="UserInfo">
+		select * from
+		user_info where id = #{id}
+	</select>
+
+	<select id="list" resultType="UserInfo">
+		select * from user_info
+	</select>
+
+	<!-- #{xx}使用?进行替代，${xx}完整替代整个字符串 -->
+	<select id="find" resultType="UserInfo" parameterType="map">
+		select * from user_info
+		<!-- 动态sql -->
+		<where>
+			<if test="name!=null">
+				name like #{name}
+			</if>
+			<if test="weight!=null">
+				and weight >= ${weight}
+			</if>
+		</where>
+
+		<if test="sort!=null">
+			order by ${sort}
+			<choose>
+				<when test="order!=null">
+					${order}
+				</when>
+				<otherwise>
+					asc
+				</otherwise>
+			</choose>
+		</if>
+		limit #{pageOffset},#{pageSize}
+	</select>
+
+	<select id="find_count" parameterType="map" resultType="int">
+		select count(*) from user_info
+		<if test="name!=null">
+			where name like #{name}
+		</if>
+	</select>
+</mapper>
